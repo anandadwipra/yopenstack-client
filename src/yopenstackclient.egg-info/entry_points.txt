@@ -1,0 +1,2 @@
+[console_scripts]
+yopenstack = yopenstackclient.cli:main
