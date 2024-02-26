@@ -1,2 +1,0 @@
-python-openstackclient==6.3.0
-rich==13.6.0
