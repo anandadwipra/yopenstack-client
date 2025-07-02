@@ -1,1 +1,4 @@
 src/yopenstackclient/test.py
+dist/*
+src/yopenstack_client.egg-info
+src/yopenstackclient/__pycache__
