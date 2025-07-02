@@ -76,7 +76,12 @@ def loadCache(filename):
 
 def refreshCache(site, filename, config):
     nova = client.Client(2, session=auth(site, config))
-    vms_raw = nova.servers.list(detailed=True, search_opts={"all_tenants": True})
+    marker=None
+    vms_raw = nova.servers.list(detailed=True, search_opts={"all_tenants": True},marker=marker)
+    if len(vms_raw) % 1000 == 0:
+        marker = vms_raw[-1].id
+        vms_raw += nova.servers.list(detailed=True, search_opts={"all_tenants": True},marker=marker)
+    print(len(vms_raw))
     vms = []
     vm = {}
     vms_field = ["id","OS-EXT-SRV-ATTR:instance_name", "name", "addresses", "flavor", "OS-EXT-SRV-ATTR:hypervisor_hostname"]
@@ -114,7 +119,7 @@ def sortir(e):
 def search(sites, **kwargs):
     date = datetime.now().strftime("%d%m%Y")
     filename = "bsdcache" if sites == "jkt" else "sbycache"
-    filename = "/home/dev/openstack/pycache/"+filename+date
+    filename = "/home/dev/openstack/pycache2/"+filename+date
     if not os.path.isfile(filename) or kwargs["refresh"]: refreshCache(sites, filename, kwargs["config"])
     cache = loadCache(filename)
     datasvm = cache["vms"]
