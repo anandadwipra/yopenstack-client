@@ -60,7 +60,7 @@ def storeCache(filename, vms, flav, external_net):
     db["flavor"] = flav
     db["network"] = external_net
     # store cache
-    dbfile = open(filename, "ab")
+    dbfile = open(filename, "wb")
     pickle.dump(db, dbfile)
     print("Caching")
     dbfile.close()
