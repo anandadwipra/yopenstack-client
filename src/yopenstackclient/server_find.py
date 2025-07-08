@@ -81,7 +81,6 @@ def refreshCache(site, filename, config):
     if len(vms_raw) % 1000 == 0:
         marker = vms_raw[-1].id
         vms_raw += nova.servers.list(detailed=True, search_opts={"all_tenants": True},marker=marker)
-    print(len(vms_raw))
     vms = []
     vm = {}
     vms_field = ["id","OS-EXT-SRV-ATTR:instance_name", "name", "addresses", "flavor", "OS-EXT-SRV-ATTR:hypervisor_hostname"]
@@ -117,7 +116,10 @@ def sortir(e):
 
 
 def search(sites, **kwargs):
-    date = datetime.now().strftime("%d%m%Y")
+    if kwargs['cdate'] is None:
+        date = datetime.now().strftime("%d%m%Y")
+    else:
+        date = kwargs['cdate']
     filename = "bsdcache" if sites == "jkt" else "sbycache"
     filename = "/home/dev/openstack/pycache2/"+filename+date
     if not os.path.isfile(filename) or kwargs["refresh"]: refreshCache(sites, filename, kwargs["config"])
@@ -175,12 +177,14 @@ def start():
     parser.add_argument("--bsd", help="Show Only BSD Site", action="store_true")
     parser.add_argument("-C", "--column", help="specify the column(s) to include, can be repeated to show multiple columns", action="append")
     parser.add_argument('-c', '--config-file', help="Import cloud config", required=True)
+    parser.add_argument('-d', '--cache-date', help="Specify cache date",action="store")
     args = parser.parse_args()
     params = {
             "instance_name": args.instance_name,
             "hint": args.hint,
             "refresh": args.refresh,
-            "config": args.config_file
+            "config": args.config_file,
+            "cdate": args.cache_date
             }
 
     # print(args.column)
